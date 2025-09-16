@@ -1,0 +1,26 @@
+<header id="top-header" class="header top-header">
+  <section class="hero-section">
+    <div class="heading-text-container">
+      <h1 class="siteName">
+        <a class="link title-text" href="/" title="Return to home page">CSE Motors</a>
+      </h1>
+  
+      <div class="tools" id="tools">
+        <% if (locals.loggedin) { %>
+          
+            <h3 class="text-heading account_name">
+              <a title="Welcome" href="/account/">Welcome <%= locals.accountData.account_firstname %></a>
+            </h3>
+            <h3 class="text-heading logout_link">
+              <a title="Click to log out" class="link" href="/account/logout">Logout</a>
+            </h3>
+          
+        <% } else { %>
+          <h3>
+            <a title="Click to log in" class="link" href="/account/login">My Account</a>
+          </h3>
+        <% } %>
+      </div>
+    </div>
+  </section>
+</header>
