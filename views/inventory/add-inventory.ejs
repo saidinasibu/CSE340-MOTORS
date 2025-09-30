@@ -1,0 +1,54 @@
+
+<!-- Content Heading -->
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else {
+      res.redirect('/')
+} %>
+
+<!-- Message Block -->
+<% if (errors) { %>
+    <ul class="notice">
+   <% errors.array().forEach(error => { 
+        if (error.msg !== 'Invalid value') { %>
+            <li><%= error.msg %></li>
+        <% } 
+    }) %>
+   </ul>
+<% } %>
+
+<!-- Display form -->
+<form id="loginForm" action="/inv/add-inventory" method="post">
+    <div class="data-box">
+        <label for="classificationList">Classification</label>
+        <%-   classificationSelect %>
+
+        <label for="inv_make">Make</label>
+        <input type="text" name="inv_make" id="inv_make" placeholder="e.g Harley-Davidson" required value="<%= locals.inv_make %>">
+
+        <label for="inv_model">Model</label>
+        <input type="text" name="inv_model" id="inv_model" placeholder="e.g Heritage Softail Classic" required  value="<%= locals.inv_model %>">
+
+        <label for="inv_year">Year</label>
+        <input type="text" name="inv_year" id="inv_year" pattern="^[0-9]*$" placeholder="e.g 2016" required  value="<%= locals.inv_year %>">    
+
+        <label for="inv_description">Description</label>
+        <textarea name="inv_description" id="inv_description" cols="30" rows="10" placeholder="Insert description here..." required><%= locals.inv_description %></textarea>
+
+        <label for="inv_image">Image path</label>
+        <input type="text" name="inv_image" id="inv_image" required value="<%= locals.inv_image %>/images/vehicles/no-image.png">
+
+        <label for="inv_thumbnail">Thumbnail path</label>
+        <input type="text" name="inv_thumbnail" id="inv_thumbnail" required  value="<%= locals.inv_thumbnail %>/images/vehicles/no-image-tn.png">
+
+        <label for="inv_price">Price</label>
+        <input type="text" name="inv_price" id="inv_price" pattern="^[0-9]*$" placeholder="e.g 13000" required  value="<%= locals.inv_price %>">
+
+        <label for="inv_miles">Miles</label>
+        <input type="text" name="inv_miles" id="inv_miles" pattern="^[0-9]*$" placeholder="e.g 500" required  value="<%= locals.inv_miles %>">
+
+        <label for="inv_color">Color</label>
+        <input type="text" name="inv_color" id="inv_color" placeholder="e.g Orange" required  value="<%= locals.inv_color %>">
+    </div>
+    <button>Add Classification</button>
+</form>

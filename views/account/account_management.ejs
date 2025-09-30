@@ -1,0 +1,39 @@
+<!-- Content Heading -->
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else {
+      res.redirect('/')
+} %>
+
+<!-- Message Block -->
+<%- messages()  %>
+<% if (errors) { %>
+  <ul class="notice">
+<% errors.array().forEach(error => { %>
+  <li><%= error.msg %></li>
+<%  }) %>
+  </ul>
+<% } %>
+
+<!-- Body -->
+<div class="accountManagement">
+  <h2>Welcome  <%=locals.accountData.account_firstname %></h2>
+  <p>You're logged in!</p>
+  <p><a href="update-account/<%=locals.accountData.account_id%>">Edit account information</a></p>
+</div>
+
+<div class="accountManagement">
+  <h2>Message Center</h2>
+  <ul class="messageList">
+    <li>You have (<%= locals.unreadMessage %>) unread messages</li>
+    <li>Go to <a href="/inbox/">Inbox</a></li>
+  </ul>
+</div>
+  
+  <% if (locals.accountData.account_type == "Employee"|| locals.accountData.account_type == "Admin")
+  {%>
+<div class="accountManagement">
+    <h3>Inventory Management</h3>
+    <p><a href="../inv/">Management Inventory</a></p>
+</div>
+  <% } %>

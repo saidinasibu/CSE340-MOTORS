@@ -1,0 +1,32 @@
+# Each item listed in this file will be ignored by git
+# and will not be uploaded to github. The blank lines
+# and comments are unnecessary, but included for 
+# clarification.
+
+# node_modules is a storage folder for Node and
+# can get very large.
+node_modules
+
+# .env file is for local use only. It contains
+# values not to be shared and most of the values
+# will be manually created by you or dynamically # created on the hosting server
+.env
+
+# .DS_Store is only for Mac users
+**/.DS_Store
+
+README.md
+
+
+# account_firstname: Basic
+# account_lastname: Client
+# account_email: basic@340.edu
+# account_password: I@mABas1cCl!3nt
+# account_firstname: Happy
+# account_lastname: Employee
+# account_email: happy@340.edu
+# account_password: I@mAnEmpl0y33
+# account_firstname: Manager
+# account_lastname: User
+# account_email: manager@340.edu
+# account_password: I@mAnAdm!n1strat0r
