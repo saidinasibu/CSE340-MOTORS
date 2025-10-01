@@ -1,48 +1,37 @@
 const { Pool } = require("pg");
 require("dotenv").config();
 
-let pool;
+// Détection de l'environnement
+const isDev = process.env.NODE_ENV === "development";
 
-if (process.env.NODE_ENV === "development") {
-  // Local development: no SSL
-  pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: false,  // Disable SSL here explicitly
-  });
+// Configuration du pool
+const pool = isDev
+  ? new Pool({
+      user: process.env.DB_USER || "postgres",
+      password: String(process.env.DB_PASSWORD || ""),
+      host: process.env.DB_HOST || "localhost",
+      port: parseInt(process.env.DB_PORT, 10) || 5432,
+      database: process.env.DB_NAME || "cse340_assignment2",
+      ssl: false, // 🔹 désactivé en dev
+    })
+  : new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }, // 🔹 requis pour Render
+    });
 
-  module.exports = {
-    pool,
-    async query(text, params) {
-      try {
-        const res = await pool.query(text, params);
-        console.log("executed query", { text });
-        return res;
-      } catch (error) {
-        console.error("error in query", { text });
-        throw error;
-      }
-    },
-  };
-} else {
-  // Production (or any other environment), enable SSL if required
-  pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  });
-
-  module.exports = {
-    pool,
-    async query(text, params) {
-      try {
-        const res = await pool.query(text, params);
-        console.log("executed query", { text });
-        return res;
-      } catch (error) {
-        console.error("error in query", { text });
-        throw error;
-      }
-    },
-  };
+// Fonction utilitaire pour exécuter les requêtes
+async function query(text, params) {
+  try {
+    const res = await pool.query(text, params);
+    if (isDev) console.log("Executed query:", { text, params });
+    return res;
+  } catch (error) {
+    console.error("Database query error:", { text, params, error });
+    throw error;
+  }
 }
+
+module.exports = {
+  query,
+  pool,
+};

@@ -1,3 +1,18 @@
 {
-    "postman.settings.dotenv-detection-notification-visibility": false
+    "sqltools.connections": [
+        
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "PG Local",
+            "database": "cse340_assignment2",
+            "username": "postgres",
+            "password": "Zagadou92",
+            "connectionTimeout": 30
+        }
+    ],
+    "mssql.objectExplorer.collapseConnectionGroupsOnStartup": true
 }

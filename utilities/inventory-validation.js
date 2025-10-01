@@ -1,249 +1,195 @@
-const utilities = require(".")
-const { body, validationResult } = require("express-validator")
-const validate = {}
-const inventoryModel = require("../models/inventory-model")
-
-/*  **********************************
- *  Classification Data Validation Rules
- * ********************************* */
-validate.classificationRules = () => {
-    return [
-      // classification_name is required and must be string
-      body("classification_name")
-        .trim()
-        .isLength({ min: 2 })
-        .withMessage("Please provide a classification name.") // on error this message is sent.
-        .custom(async (classification_name) => {
-            const classificationExists = await inventoryModel.checkClassification(classification_name)
-            if (classificationExists){
-              throw new Error("Classification exists.")
-            }})
-      ]
-  }
-
-/* ******************************
- * Check data and return errors or continue to registration
- * ***************************** */
-validate.checkClassificationData = async (req, res, next) => {
-    const { classification_name } = req.body
-    let errors = []
-    errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      let nav = await utilities.getNav()
-      res.render("inventory/add-classification", {
-        errors,
-        title: "Add Classification",
-        nav,
-        classification_name,
-      })
-      return
-    }
-    next()
-  }
-
-/*  **********************************
- *  Inventory Data Validation Rules
- * ********************************* */
-validate.inventoryRules = () => {
-  return [
-    // classification_name is required and must be string
-    body("inv_make")
-      .trim()
-      .isLength({ min: 2 })
-      .withMessage("Please provide an inventory make."), // on error this message is sent.
-
-      // lastname is required and must be string
-    body("inv_model")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Please provide an inventory model."), // on error this message is sent.
-
-    // lastname is required and must be string
-    body("inv_year")
-      .trim()
-      .isLength({ min: 2 })
-      .withMessage("Please provide an inventory year."), // on error this message is sent.
-
-      // lastname is required and must be string
-    body("inv_description")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Please provide an inventory description."), // on error this message is sent.
-
-    // lastname is required and must be string
-    body("inv_image")
-      .trim()
-      .isLength({ min: 2 })
-      .withMessage("Please provide an inventory image."), // on error this message is sent.
-
-          // lastname is required and must be string
-    body("inv_thumbnail")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Please provide an inventory thumbnail."), // on error this message is sent.
-
-    // lastname is required and must be string
-    body("inv_price")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Please provide a inventory price."), // on error this message is sent.
-
-    // lastname is required and must be string
-    body("inv_miles")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Please provide inventory miles."), // on error this message is sent.
-
-    // lastname is required and must be string
-    body("inv_color")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Please provide inventory color."), // on error this message is sent.
-    ]
-}
-
-/* ******************************
- * Check data and return errors 
- * ***************************** */
-validate.checkInventoryData = async (req, res, next) => {
-  const { inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles,inv_color, classification_name } = req.body
-  let errors = []
-  errors = validationResult(req)
-  if (!errors.isEmpty()) {
-    let nav = await utilities.getNav()
-    const dropdown = await utilities.buildDropDownForm()
-    res.render("inventory/add-inventory", {
-      errors,
-      title: "Add Inventory",
-      nav,
-      dropdown,
-      inv_make,
-      inv_model,
-      inv_year,
-      inv_description,
-      inv_image,
-      inv_thumbnail,
-      inv_price,
-      inv_miles,
-      inv_color,
-      classification_name,
-    })
-    return
-  }
-  next()
-}
+const utilities = require(".");
+const { body, validationResult } = require("express-validator");
+const validate = {};
 
 /* **********************************
- *  New Inventory Data Validation Rules
- * ********************************* */
-validate.newInventoryRules = () => {
+ *  Add Classification Validation Rules
+ ********************************** */
+validate.addClassificationRules = () => {
   return [
-    // classification_name is required and must be string
-    body("inv_id")
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage("Inventory ID is not valid."), // on error this message is sent.
+    body("classification_name")
+      .trim()
+      .escape()
+      .isAlpha("en-US", { allow: "" })
+      .withMessage("Please provide only alphabetic characters."),
+  ];
+};
 
-    // classification_name is required and must be string
+/* **********************************
+ *  Check Classification Data
+ ********************************** */
+validate.checkClassificationData = async (req, res, next) => {
+  if (!req.body) req.body = {}; // sécuriser req.body
+
+  const { classification_name } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    let nav = await utilities.getNav();
+    return res.render("inventory/add-classification", {
+      errors,
+      title: "Add Classification",
+      nav,
+      classification_name,
+    });
+  }
+  next();
+};
+
+/* **********************************
+ *  Add Inventory Validation Rules
+ ********************************** */
+validate.addInventoryRules = () => {
+  return [
+    body("classification_id")
+      .trim()
+      .escape()
+      .isLength({ min: 1 })
+      .withMessage("Please choose classification name."),
+
     body("inv_make")
       .trim()
-      .isLength({ min: 2 })
-      .withMessage("Please provide an inventory make."), // on error this message is sent.
+      .escape()
+      .isLength({ min: 3 })
+      .withMessage("Please provide a valid make."),
 
-      // lastname is required and must be string
     body("inv_model")
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage("Please provide an inventory model."), // on error this message is sent.
-
-    // lastname is required and must be string
-    body("inv_year")
       .trim()
-      .isLength({ min: 2 })
-      .withMessage("Please provide an inventory year."), // on error this message is sent.
+      .escape()
+      .isLength({ min: 3 })
+      .withMessage("Please provide a valid model name."),
 
-      // lastname is required and must be string
     body("inv_description")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Please provide an inventory description."), // on error this message is sent.
+      .trim()
+      .escape()
+      .isLength({ min: 1 })
+      .withMessage("Please provide a description."),
 
-    // lastname is required and must be string
     body("inv_image")
       .trim()
-      .isLength({ min: 2 })
-      .withMessage("Please provide an inventory image."), // on error this message is sent.
+      .isLength({ min: 1 })
+      .withMessage("Please provide an image path."),
 
-          // lastname is required and must be string
     body("inv_thumbnail")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Please provide an inventory thumbnail."), // on error this message is sent.
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage("Please provide a thumbnail path."),
 
-    // lastname is required and must be string
     body("inv_price")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Please provide a inventory price."), // on error this message is sent.
+      .trim()
+      .escape()
+      .matches(/^\d+(\.\d{1,2})?$/)
+      .withMessage("Please provide a valid price."),
 
-    // lastname is required and must be string
+    body("inv_year")
+      .trim()
+      .escape()
+      .matches(/^\d{4}$/)
+      .withMessage("Please provide a valid year."),
+
     body("inv_miles")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Please provide inventory miles."), // on error this message is sent.
+      .trim()
+      .escape()
+      .matches(/^\d+$/)
+      .withMessage("Please provide valid miles."),
 
-    // lastname is required and must be string
     body("inv_color")
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage("Please provide inventory color."), // on error this message is sent.
-    ]
-}
+      .trim()
+      .escape()
+      .isLength({ min: 1 })
+      .withMessage("Please provide a valid color."),
+  ];
+};
 
-/* ******************************
- * Check data and return errors to the edit view
- * ***************************** */
-validate.checkUpdateData = async (req, res, next) => {
-  const { 
-    inv_id, 
-    inv_make, 
-    inv_model, 
-    inv_year, 
-    inv_description, 
-    inv_image, 
-    inv_thumbnail, 
-    inv_price, 
+/* **********************************
+ *  Check Inventory Data
+ ********************************** */
+validate.checkInventoryData = async (req, res, next) => {
+  if (!req.body) req.body = {}; // sécuriser req.body
+
+  const {
+    classification_id,
+    inv_make,
+    inv_model,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_year,
     inv_miles,
-    inv_color, 
-    classification_name 
-  } = req.body
-  const title = `${inv_make} ${inv_model}`
-  console.log(title)
-  let errors = []
-  errors = validationResult(req)
+    inv_color,
+  } = req.body;
+
+  const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    let nav = await utilities.getNav()
-    const classificationSelect = await utilities.buildDropDownForm()
-    res.render("inventory/edit-inventory", {
+    const nav = await utilities.getNav();
+    const classificationList = await utilities.buildClassificationList(
+      classification_id
+    );
+    return res.render("inventory/add-inventory", {
       errors,
-      title: "Edit " + title,
+      title: "Add Vehicle",
       nav,
-      classificationSelect,
+      classificationList,
+      classification_id,
       inv_make,
       inv_model,
-      inv_year,
       inv_description,
       inv_image,
       inv_thumbnail,
       inv_price,
+      inv_year,
       inv_miles,
       inv_color,
-      classification_name,
-      inv_id
-    })
-    return
+    });
   }
-  next()
-}
+  next();
+};
 
-  module.exports = validate
+/* **********************************
+ *  Check Update Inventory Data
+ ********************************** */
+validate.checkUpdateData = async (req, res, next) => {
+  if (!req.body) req.body = {}; // sécuriser req.body
+
+  const {
+    classification_id,
+    inv_id,
+    inv_make,
+    inv_model,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_year,
+    inv_miles,
+    inv_color,
+  } = req.body;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const nav = await utilities.getNav();
+    const classificationList = await utilities.buildClassificationList(
+      classification_id
+    );
+    return res.render("inventory/add-inventory", {
+      errors,
+      title: "Add Vehicle",
+      nav,
+      classificationList,
+      classification_id,
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_year,
+      inv_miles,
+      inv_color,
+    });
+  }
+  next();
+};
+
+module.exports = validate;

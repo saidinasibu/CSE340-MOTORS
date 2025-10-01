@@ -1,19 +1,19 @@
 <% if (title) { %>
 <h1><%= title %></h1>
-<% } else { res.redirect('/') } %> 
-<%- messages() %>
-<br >
+<% } else { res.redirect('/') } %> <%- messages() %>
 <% if (errors) { %>
+<br />
 <ul class="notice">
   <% errors.array().forEach(error => { %>
   <li><%= error.msg %></li>
   <% }) %>
 </ul>
-<br >
+<br />
 <% } %>
 <div class="form-container">
+  <h2>Acount Info Update</h2><br>
   <p class="form-advice">📝 All fields are required ✍️</p>
-  <form id="registerForm" action="/account/register" method="post">
+  <form class="updateForm" action="/users/update/info" method="post">
     <div class="form-group">
       <label for="firstName">First Name:</label>
       <input
@@ -47,6 +47,16 @@
         value="<%= locals.account_email %>"
       >
     </div>
+    <button type="submit" class="btn-account" disabled>Update Account</button>
+    <input type="hidden" name="account_id"
+    <% if(locals.account_id) { %> value="<%= locals.account_id%>"
+    <% } %>>
+  </form>
+</div>
+
+<div class="form-container">
+  <h2>Update Password</h2><br>
+  <form class="updateForm" action="/users/update/password" method="post">
     <div class="form-group">
       <label for="password">Password:</label>
       <input
@@ -67,6 +77,11 @@
     <button id="pwd-visibility" type="button">
       Toggle Password Visibility
     </button>
-    <button type="submit" class="btn-account">Register</button>
+    <button type="submit" class="btn-account" disabled>Change Password</button>
+    <input type="hidden" name="account_id"
+    <% if(locals.account_id) { %> value="<%= locals.account_id %>"
+    <% } %>>
   </form>
 </div>
+
+<script src="../../js/inv-update.js"></script>

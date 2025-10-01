@@ -1,71 +1,64 @@
-/* *************************************
-*   Account Routes
-************************************* */
-// Needed Resources 
-const express = require("express")
-const router = new express.Router() 
-const accountController = require("../controllers/accountController")
-const utilities = require("../utilities")
-const regValidate = require('../utilities/account-validation')
+const accountValidate = require("../utilities/account-validation");
 
+// Needed Resources
+const express = require("express");
+const router = new express.Router();
+const utilities = require("../utilities/");
+const accountController = require("../controllers/accountController");
 
-
-// Route to build Login View
-router.get("/login", utilities.handleErrors(accountController.buildLogin))
-
-// Route to build registration view
-router.get("/register", utilities.handleErrors(accountController.buildRegister))
-
-// Process Management view
+// Route sent to Account Management View
 router.get(
-    "/", 
-    utilities.checkLogin,
-    utilities.handleErrors(accountController.buildManagement))
+  "/",
+  utilities.checkLogin,
+  utilities.handleErrors(accountController.buildAccountManagement)
+);
 
-router.get("/update-account/:accountId", 
-    utilities.checkLogin, 
-    utilities.handleErrors(accountController.buildAccountUpdate))
+// Route sent when login link is clicked
+router.get("/login", utilities.handleErrors(accountController.buildLogin));
 
-router.get("/logout",
-    utilities.handleErrors(accountController.buildLogoutView)
-)
+// Route sent when the "My Account" link is clicked
+router.get(
+  "/register",
+  utilities.handleErrors(accountController.buildRegister)
+);
 
+// Route sent to Account Update View
+router.get(
+  "/update/:account_id",
+  utilities.checkLogin,
+  utilities.handleErrors(accountController.buildAccountUpdate)
+);
 
-
-// Process the registration data
+// Route to post Edit Account Info
 router.post(
-    "/register",
-    regValidate.registrationRules(),
-    regValidate.checkRegData,
-    utilities.handleErrors(accountController.registerAccount)
-)
+  "/update/info",
+  accountValidate.updateInfoRules(),
+  accountValidate.checkUpdateInfoData,
+  utilities.handleErrors(accountController.updateAccountInfo),
+);
 
-// Process the login data
+// Route to post Edit Password
 router.post(
-    "/login",
-    regValidate.loginRules(),
-    regValidate.checkLoginData,
-    utilities.handleErrors(accountController.logToAccount)
-)
+  "/update/password",
+  accountValidate.updatePwdRules(),
+  accountValidate.checkUpdatePassword,
+  utilities.handleErrors(accountController.updatePassword)
+);
 
-/* ***********************
- * Route to update account data
- *************************/
+// Route to post registration information to database
 router.post(
-    "/update/",
-    regValidate.accountUpdateRules(),
-    regValidate.checkAccountUpdateData,
-    utilities.handleErrors(accountController.processAccountUpdate)
-)
+  "/register",
+  accountValidate.registrationRules(),
+  accountValidate.checkRegData,
+  utilities.handleErrors(accountController.registerAccount)
+);
 
-/* ***********************
- * Route to update account password
- *************************/
+// Route to post login attempt
 router.post(
-    "/update-password/",
-    regValidate.passwordUpdateRules(),
-    regValidate.checkPasswordUpdateData,
-    utilities.handleErrors(accountController.processPasswordUpdate)
-)
+  "/login",
+  accountValidate.loginRules(),
+  accountValidate.checkLogData,
+  utilities.handleErrors(accountController.accountLogin)
+);
 
 module.exports = router;

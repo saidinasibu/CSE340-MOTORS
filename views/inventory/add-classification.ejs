@@ -1,27 +1,36 @@
-<!-- Content Heading -->
 <% if (title) { %>
-    <h1><%= title %></h1>
-    <% } else {
-      res.redirect('/')
-} %>
-
-<!-- Message Block -->
+<h1><%= title %></h1>
+<% } else { res.redirect('/') } %> 
 <%- messages() %>
+<br >
 <% if (errors) { %>
-    <ul class="notice">
-        <% errors.array().forEach(error => { %>
-            <li><%= error.msg %></li>
-        <% }) %>
-    </ul>
+<ul class="notice">
+  <% errors.array().forEach(error => { %>
+  <li><%= error.msg %></li>
+  <% }) %>
+</ul>
+<br >
 <% } %>
-
-<p class="classificationMessage">FIELD IS REQUIRED.</p>
-<!-- Display form -->
-<form id="loginForm" action="/inv/add-classification" method="post">
-    <div class="data-box">
-        <label for="classification_name">Classification Name</label>
-        <p>NAME MUST BE ALPHABETIC CHARACTERS ONLY.</p> <br>
-        <input type="text" name="classification_name" id="classification_name" pattern="^[A-Za-z]+$" placeholder="e.g. Motorcycle" required value="<%= locals.classification_name %>">
-    </div>    
-    <button>Add Classification</button>
-</form>
+<div class="form-container">
+  <p class="form-advice">📝 All fields are required ✍️</p>
+  <form id="addClassificationForm" action="/inv/add-classification" method="post">
+    <div class="form-group">
+      <label for="classificationName">Classification Name:</label>
+      <input
+        type="text"
+        id="classificationName"
+        name="classification_name"
+        placeholder="Enter a valid classification name"
+        required
+        pattern="[A-Za-z]+"
+        value="<%= locals.classification_name %>"
+      >
+    </div>
+    <div class="form-advice">
+      <span
+        >Name cannot contain a space or special character of any kind.</span
+      >
+    </div>
+    <button type="submit" class="btn-account">Add Classification</button>
+  </form>
+</div>
