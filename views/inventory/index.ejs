@@ -1,28 +1,33 @@
 <% if (title) { %>
-<h1><%= title %></h1>
-<% } else { res.redirect('/') } %> <%- messages() %> <br>
+    <h1><%= title %></h1>
+  <% } else {
+      res.redirect('/')
+  } %>
 
-<ul id="man-display">
-  <li>
-    <a href="../../inv/add-classification" title="Add New Classification view"
-      >Add New Classification</a
-    >
-  </li>
-  <li>
-    <a href="../../inv/add-inventory" title="Add New Vehicle view"
-      >Add New Vehicle</a
-    >
-  </li>
-</ul>
 
-<div class="manager-container">
-  <h2>Manage Inventory</h2>
-  <p>Choose a classification to see those inventory items.</p>
+<%- messages() %>
 
-  <%- classificationSelect %>
+<section id="inv-mgmt">
 
-  <table id="inventoryDisplay"></table>
-  <noscript>JavaScript must be enabled to use this page.</noscript>
-</div>
+    <ul>
+        <li><a href="/inv/add-classification" title="Add New Classification">Add New Classification</a></li>
+        <li><a href="/inv/add-inventory" title="Add New Inventory">Add New Inventory</a></li>
+    </ul>
+
+</section>
+
+
+<section id="select-inv">
+
+    <h2>Manage Inventory</h2>
+    
+    <%- classificationSelect %>
+
+    <table id="inventoryDisplay"></table>
+
+    <noscript>JavaScript must be enabled to use this page.</noscript>
+
+</section>
+
 
 <script src="../../js/inventory.js"></script>

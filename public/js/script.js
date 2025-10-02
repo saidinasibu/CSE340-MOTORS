@@ -1,36 +1,15 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const passwordInput = document.getElementById("password");
-  const togglePasswordBtn = document.getElementById("pwd-visibility");
+const showHideBtn = document.querySelector("#show-hide");
+showHideBtn.addEventListener("click", () => {
+    const pwInput = document.querySelector("#account_password");
+    const typeAttr = pwInput.getAttribute("type");
 
-  if (passwordInput && togglePasswordBtn) {
-    const togglePassword = () => {
-      passwordInput.type =
-        passwordInput.type === "password" ? "text" : "password";
-    };
-
-    togglePasswordBtn.addEventListener("click", togglePassword);
-  }
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  const logoutLink = document.querySelector('a[href="/logout"]');
-  if (logoutLink) {
-    logoutLink.addEventListener("click", function (event) {
-      event.preventDefault();
-      fetch("/logout", {
-        method: "POST",
-        credentials: "same-origin",
-      })
-        .then((response) => {
-          if (response.ok) {
-            window.location.href = "/";
-          } else {
-            console.error("Error logout");
-          }
-        })
-        .catch((error) => {
-          console.error("Error logout:", error);
-        });
-    });
-  }
+    if (typeAttr === "password") {
+        pwInput.setAttribute("type", "text");
+        showHideBtn.innerHTML = "Hide Password";
+        console.log("Hide password");
+    } else {
+        pwInput.setAttribute("type", "password");
+        showHideBtn.innerHTML = "Show Password";
+        console.log("Show password");
+    }
 });

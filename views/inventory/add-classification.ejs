@@ -1,36 +1,37 @@
 <% if (title) { %>
-<h1><%= title %></h1>
-<% } else { res.redirect('/') } %> 
+    <h1><%= title %></h1>
+  <% } else {
+      res.redirect('/')
+  } %>
+
 <%- messages() %>
-<br >
+
 <% if (errors) { %>
-<ul class="notice">
-  <% errors.array().forEach(error => { %>
-  <li><%= error.msg %></li>
-  <% }) %>
-</ul>
-<br >
+    <ul class="notice">
+        <% errors.array().forEach(error => { 
+            if (error.msg !== "Invalid value") { %>
+                <li><%= error.msg %></li>
+            <% } 
+        }) %>
+    </ul>
 <% } %>
-<div class="form-container">
-  <p class="form-advice">📝 All fields are required ✍️</p>
-  <form id="addClassificationForm" action="/inv/add-classification" method="post">
-    <div class="form-group">
-      <label for="classificationName">Classification Name:</label>
-      <input
-        type="text"
-        id="classificationName"
-        name="classification_name"
-        placeholder="Enter a valid classification name"
-        required
-        pattern="[A-Za-z]+"
-        value="<%= locals.classification_name %>"
-      >
-    </div>
-    <div class="form-advice">
-      <span
-        >Name cannot contain a space or special character of any kind.</span
-      >
-    </div>
-    <button type="submit" class="btn-account">Add Classification</button>
-  </form>
-</div>
+
+<section id="add-classification">
+    <form action="/inv/add-classification" id="add-classification-form" method="post">
+        <div>
+            <p>Classification Name must be <b>ALPHANUMERIC</b> characters only</p>
+            <label for="classification_name"><span class="form-element">Classification Name:</span></label>
+            <input 
+                type="text" 
+                name="classification_name" 
+                id="classification_name" 
+                pattern="^[a-zA-Z0-9]+$"
+                title="Classification name must not contain spaces or special characters."
+                required
+            >
+        </div>
+        
+        <button type="submit" id="add-class-button">Add Classification</button>
+    </form>
+</section>
+

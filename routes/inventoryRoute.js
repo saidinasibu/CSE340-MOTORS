@@ -1,87 +1,62 @@
-const express = require("express");
-const router = new express.Router();
+const express = require("express")
+const router = new express.Router()
+const invController = require("../controllers/invController")
+const utilities = require("../utilities/")
+const classValidate = require("../utilities/management-validation")
 
-// Utilities & Validation
-const utilities = require("../utilities/");
-const invValidate = require("../utilities/inventory-validation");
-
-// Controllers
-const invController = require("../controllers/invController");
-
-// ===== PUBLIC ROUTES =====
-// View inventory by classification (public)
+// Route to build inventory by classification view
 router.get("/type/:classificationId", utilities.handleErrors(invController.buildByClassificationId));
-// View single item (public)
-router.get("/detail/:invId", utilities.handleErrors(invController.buildItemByInvId));
-// Public inventory listing
-router.get("/", utilities.handleErrors(invController.buildVehicleManagement));
 
-// ===== ADMIN / PROTECTED ROUTES =====
-router.get("/admin",
-  utilities.checkJWTToken,
-  utilities.checkAccountType,
-  utilities.handleErrors(invController.buildVehicleManagement)
-);
+// Route by delivery detail and classification id
+router.get("/detail/:inventoryId", utilities.handleErrors(invController.buildByDetailInventoryId));
 
-router.get("/add-classification",
-  utilities.checkJWTToken,
-  
-  utilities.handleErrors(invController.buildAddClassification)
-);
+// Route to get inventory management view
+router.get("/", utilities.handleErrors(invController.buildManagement))
 
-router.get("/add-inventory",
-  utilities.checkJWTToken,
-  
-  utilities.handleErrors(invController.buildAddInventory)
-);
+router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
 
-router.get("/edit/:inv_id",
-  utilities.checkJWTToken,
-  
-  utilities.handleErrors(invController.buildEditInventory)
-);
+// Router to get add-inventory view
+router.get("/add-classification", 
+    utilities.checkAdmin,
+    utilities.handleErrors(invController.buildAddClassification))
 
-router.get("/delete/:inv_id",
-  utilities.checkJWTToken,
-  
-  utilities.handleErrors(invController.deleteView)
-);
+router.post("/add-classification", 
+    utilities.checkAdmin,
+    classValidate.addClassRules(),
+    classValidate.checkClassData,
+    utilities.handleErrors(invController.processAddClassification)
+)
 
-router.get("/getInventory/:classification_id",
-  utilities.checkJWTToken,
-  
-  utilities.handleErrors(invController.getInventoryJSON)
-);
+router.get("/add-inventory", 
+    utilities.checkAdmin,
+    utilities.handleErrors(invController.buildInventoryForm))
 
-// ===== POST ROUTES =====
-router.post("/add-classification",
-  utilities.checkJWTToken,
-  
-  invValidate.addClassificationRules(),
-  invValidate.checkClassificationData,
-  utilities.handleErrors(invController.addClassificationName)
-);
+router.post("/add-inventory", 
+    utilities.checkAdmin,
+    classValidate.insertDataRules(),
+    classValidate.checkInsertData,
+    utilities.handleErrors(invController.processAddInventory))
 
-router.post("/add-inventory",
-  utilities.checkJWTToken,
-  
-  invValidate.addInventoryRules(),
-  invValidate.checkInventoryData,
-  utilities.handleErrors(invController.addNewVehicle)
-);
 
-router.post("/update/",
-  utilities.checkJWTToken,
-  
-  invValidate.addInventoryRules(),
-  invValidate.checkUpdateData,
-  utilities.handleErrors(invController.updateInventory)
-);
 
-router.post("/delete",
-  utilities.checkJWTToken,
-  
-  utilities.handleErrors(invController.deleteItem)
-);
+router.get("/edit/:inv_id", 
+    utilities.checkAdmin,
+    utilities.handleErrors(invController.buildEditInventory))
+
+router.post("/update/", 
+    utilities.checkAdmin,
+    classValidate.insertDataRules(),
+    classValidate.checkUpdateData,
+    utilities.handleErrors(invController.updateInventory))
+
+
+router.get("/delete/:inv_id", 
+    utilities.checkAdmin,
+    utilities.handleErrors(invController.buildDeleteInventory))
+
+router.post("/delete/", 
+    utilities.checkAdmin,
+    utilities.handleErrors(invController.deleteInventory))
+
 
 module.exports = router;
